@@ -1,0 +1,14 @@
+{
+  "name": "biblioteca-academiaads",
+  "version": "1.0.0",
+  "description": "Sistema sencillo de Biblioteca en 3 capas con JavaScript Puro y MariaDB - Creado por AcademiaAds",
+  "main": "server.js",
+  "author": "AcademiaAds",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.11.0"
+  }
+}
