@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Biblioteca | AcademiaAds</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex">
+
+  <!-- MENÚ LATERAL (SIDEBAR) - AcademiaAds -->
+  <aside class="w-64 bg-slate-900 text-white flex flex-col min-h-screen shadow-xl shrink-0">
+    <div class="p-6 border-b border-slate-800">
+      <h1 class="font-bold text-lg leading-tight text-indigo-400">AcademiaAds</h1>
+      <p class="text-xs text-slate-400">Sistema de Biblioteca</p>
+    </div>
+
+    <div class="px-6 py-4 bg-slate-800/60 border-b border-slate-800 text-xs">
+      <p class="text-slate-400">Sesión iniciada como:</p>
+      <p id="nombreUsuarioActivo" class="font-semibold text-white truncate mt-0.5">Cargando...</p>
+    </div>
+
+    <nav class="flex-1 p-4 space-y-2">
+      <button onclick="cambiarSeccion('libros')" id="btnMenu-libros" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition bg-indigo-600 text-white">
+        <span>Libros</span>
+      </button>
+      <button onclick="cambiarSeccion('usuarios')" id="btnMenu-usuarios" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition text-slate-300 hover:bg-slate-800">
+        <span>Usuarios</span>
+      </button>
+      <button onclick="cambiarSeccion('prestamos')" id="btnMenu-prestamos" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition text-slate-300 hover:bg-slate-800">
+        <span>Préstamos</span>
+      </button>
+    </nav>
+
+    <div class="p-4 border-t border-slate-800">
+      <button onclick="cerrarSesion()" class="w-full bg-red-600/90 hover:bg-red-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
+        Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-1 p-8 overflow-y-auto">
+    <div id="notificacion" class="hidden mb-6 px-4 py-3 rounded-lg text-sm font-medium border"></div>
+
+    <!-- SECCIÓN 1: LIBROS -->
+    <section id="seccion-libros" class="space-y-6">
+      <h2 class="text-2xl font-bold text-slate-800">Gestión de Libros</h2>
+      <form id="formLibro" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+        <div class="md:col-span-2">
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Título del Libro</label>
+          <input type="text" id="libroTitulo" required class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Autor</label>
+          <input type="text" id="libroAutor" required class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">ISBN</label>
+          <input type="text" id="libroIsbn" required class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div class="flex gap-2 items-end">
+          <div class="w-24">
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Stock</label>
+            <input type="number" id="libroDisponibles" min="1" value="3" required class="w-full px-3 py-2 border rounded-lg text-sm" />
+          </div>
+          <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
+            Guardar
+          </button>
+        </div>
+      </form>
+
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-slate-50 border-b text-xs uppercase text-slate-500">
+            <tr>
+              <th class="py-3 px-4">ID</th>
+              <th class="py-3 px-4">Título</th>
+              <th class="py-3 px-4">Autor</th>
+              <th class="py-3 px-4">ISBN</th>
+              <th class="py-3 px-4">Disponibles</th>
+              <th class="py-3 px-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaLibros" class="divide-y text-sm"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: USUARIOS -->
+    <section id="seccion-usuarios" class="hidden space-y-6">
+      <h2 class="text-2xl font-bold text-slate-800">Gestión de Usuarios</h2>
+      <form id="formUsuario" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo</label>
+          <input type="text" id="usuarioNombre" required class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Correo Electrónico</label>
+          <input type="email" id="usuarioCorreo" required class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Contraseña</label>
+          <input type="password" id="usuarioPassword" required class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Rol</label>
+          <select id="usuarioRol" class="w-full px-3 py-2 border rounded-lg text-sm">
+            <option value="lector">Lector / Estudiante</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
+          Crear Usuario
+        </button>
+      </form>
+
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-slate-50 border-b text-xs uppercase text-slate-500">
+            <tr>
+              <th class="py-3 px-4">ID</th>
+              <th class="py-3 px-4">Nombre</th>
+              <th class="py-3 px-4">Correo</th>
+              <th class="py-3 px-4">Rol</th>
+              <th class="py-3 px-4">Hash SHA-256 en MariaDB</th>
+              <th class="py-3 px-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaUsuarios" class="divide-y text-sm"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: PRÉSTAMOS -->
+    <section id="seccion-prestamos" class="hidden space-y-6">
+      <h2 class="text-2xl font-bold text-slate-800">Control de Préstamos</h2>
+      <form id="formPrestamo" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Seleccionar Usuario</label>
+          <select id="prestamoUsuarioId" required class="w-full px-3 py-2 border rounded-lg text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Seleccionar Libro Disponible</label>
+          <select id="prestamoLibroId" required class="w-full px-3 py-2 border rounded-lg text-sm"></select>
+        </div>
+        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
+          Registrar Préstamo
+        </button>
+      </form>
+
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-slate-50 border-b text-xs uppercase text-slate-500">
+            <tr>
+              <th class="py-3 px-4">ID</th>
+              <th class="py-3 px-4">Usuario</th>
+              <th class="py-3 px-4">Libro Prestado</th>
+              <th class="py-3 px-4">Fecha Préstamo</th>
+              <th class="py-3 px-4">Fecha Devolución</th>
+              <th class="py-3 px-4">Estado</th>
+              <th class="py-3 px-4 text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaPrestamos" class="divide-y text-sm"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
